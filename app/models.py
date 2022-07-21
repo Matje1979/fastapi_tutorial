@@ -19,6 +19,8 @@ class Post(Base):
     )
     owner_id = Column(Integer, ForeignKey("users.id", ondelete=CASCADE), nullable=False)
 
+    owner = relationship("User")
+
     # This is the same procedure that is performed when crating timestamp from
 
 

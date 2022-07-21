@@ -11,7 +11,7 @@ from psycopg2.extras import RealDictCursor
 import time
 from ..database import get_db
 from sqlalchemy.orm import Session
-
+from .. import utils
 
 router = APIRouter(prefix="/users", tags=["users"])
 
