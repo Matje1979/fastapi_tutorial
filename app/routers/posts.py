@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, List
 from fastapi import Response, status, HTTPException, Depends, APIRouter
 
 from ..oauth2 import get_current_user
@@ -8,6 +8,7 @@ from .. import models, schemas
 from fastapi import Response, status, HTTPException, Depends
 
 from ..database import get_db
+from sqlalchemy import func
 from sqlalchemy.orm import Session
 
 
@@ -17,20 +18,39 @@ router = APIRouter(prefix="/posts", tags=["posts"])
 @router.get("")
 def get_posts(
     db: Session = Depends(get_db),
-    current_user: int = Depends(get_current_user),
+    # current_user: int = Depends(get_current_user),
     limit: int = 1,
     skip: int = 0,
     search: Optional[str] = "",
 ):
     # Query oldfashioned, raw SQL way.
+    # posts = (
+    #     db.query(models.Post)
+    #     .filter(models.Post.owner_id == current_user.id)
+    #     .filter(models.Post.content.contains(search))
+    #     .limit(limit)
+    #     .offset(skip)
+    #     .all()
+    # )
+
+    # results = (
+    #     db.query(models.Post, func.count(models.Votes.post_id).label("votes"))
+    #     .join(models.Votes, models.Votes.post_id == models.Post.id, isouter=True)
+    #     .group_by(models.Post.id)
+    # ).all()
+    # print(posts)
+    # return results
     posts = (
-        db.query(models.Post)
-        .filter(models.Post.owner_id == current_user.id)
+        db.query(models.Post, func.count(models.Votes.post_id).label("votes"))
+        .join(models.Votes, models.Votes.post_id == models.Post.id, isouter=True)
+        .group_by(models.Post.id)
+        .filter(models.Post.title.contains(search))
         .limit(limit)
         .offset(skip)
-        .filter(models.Post.content.contains(search))
         .all()
     )
+    for post in posts:
+        print(post._asdict()["Post"].__dict__)
     return posts
 
 

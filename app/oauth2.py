@@ -5,14 +5,15 @@ import json
 from . import schemas
 from fastapi import Depends, status, HTTPException
 from fastapi.security import OAuth2PasswordBearer
+from app.config import settings
 
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
 # we need SECRET_KEY, ALGORITHM, EXPIRATION TIME OF THE TOKEN.
 
-SECRET_KEY = "c1f0a2648a29c0b43b1bc17ea91fdb645b4880f7b63d75115cbb788bc54c6b5e"
-ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 30
+SECRET_KEY = settings.secret_key
+ALGORITHM = settings.algorithm
+ACCESS_TOKEN_EXPIRE_MINUTES = settings.access_token_expire_minutes
 
 
 def create_access_token(data: dict, expire: Union[timedelta, None] = None):
