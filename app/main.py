@@ -35,6 +35,13 @@ app.include_router(posts.router)
 app.include_router(users.router)
 app.include_router(auth.router)
 app.include_router(votes.router)
+
+
+@app.get("/")
+def root():
+    return {"message": "Hello World"}
+
+
 # my_posts = [
 #     {"id": 1, "title": "Post 1", "content": "Hello world"},
 #     {"id": 2, "title": "Post 2", "content": "Hello world"},
